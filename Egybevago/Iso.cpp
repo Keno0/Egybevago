@@ -8,9 +8,10 @@ using namespace std;
 
 class Vector3D
 {
-	int x, y, z;
+	
 
 public:
+	int x, y, z;
 	Vector3D(int x, int y, int z)
 	{
 		this->x = x;
@@ -33,10 +34,10 @@ public:
 	}
 };
 class Edge
-{
-	int firstVertex, secondVertex;
+{	
 
 public:
+	int firstVertex, secondVertex;
 	Edge(int firstVertex, int secondVertex)
 	{
 		this->firstVertex = firstVertex;
@@ -162,6 +163,10 @@ int * ConvertNumbersStringToInt(string line, int size)
 	tempNumbers[tempNumberIndex] = tempNumber;
 	return tempNumbers;
 }
+int compare(const void * a, const void * b)
+{
+	return (*(double*)a - *(double*)b);
+}
 
 class Object3D
 {
@@ -172,7 +177,12 @@ class Object3D
 	int numberOfSide = 0;
 	int currentListOfVertexIndex = 0;
 	int currentListOfEdgeIndex = 0;
+	
 public:
+	double *edgeLengths;
+	int GetNumberOfVertex()	{ return numberOfVertex; }
+	int GetNumberOfEdge() { return numberOfEdge; }
+	int GetNumberOfSide() { return numberOfSide; }
 	void AddVertexToList(int *vertexes)
 	{
 		if (currentListOfVertexIndex < numberOfVertex)
@@ -225,6 +235,25 @@ public:
 		//oldalak kamu beolvasas
 		while (!line.empty())
 			getline(infile, line);
+
+
+	}
+
+	void CalculateEdgeLength()
+	{
+		edgeLengths = new double[numberOfEdge];
+		double deltaX = 0, deltaY = 0, deltaZ = 0;
+		for (int i = 0; i < numberOfEdge; i++)
+		{
+			deltaX = (double)(listofVertex[(listOfEdge[i].firstVertex - 1)].x - listofVertex[(listOfEdge[i].secondVertex - 1)].x);
+			deltaY = (double)(listofVertex[(listOfEdge[i].firstVertex - 1)].y - listofVertex[(listOfEdge[i].secondVertex - 1)].y);
+			deltaZ = (double)(listofVertex[(listOfEdge[i].firstVertex - 1)].z - listofVertex[(listOfEdge[i].secondVertex - 1)].z);
+
+			edgeLengths[i] = sqrt((pow(deltaX, 2) + pow(deltaY, 2) + pow(deltaZ, 2)));
+		}
+
+		qsort(edgeLengths, numberOfEdge, sizeof(double), compare);
+
 	}
 };
 
@@ -237,14 +266,51 @@ public:
 	Isomorph()
 	{
 		ifstream infile;
-		infile.open("g:\\Kerti\\Projects\\ItechChallenge\\Egybevago\\Egybevago\\Egybevago\\test1.txt");
+		infile.open("g:\\Kerti\\Projects\\ItechChallenge\\Egybevago\\Egybevago\\Egybevago\\test3.txt");
 		first.ReadDatasFromFile(infile);
 		second.ReadDatasFromFile(infile);
 		infile.close();
+	}
+
+	bool IsTheEdgesSame()
+	{
+		first.CalculateEdgeLength();
+		second.CalculateEdgeLength();
+
+		for(int i=0; i< first.GetNumberOfEdge();i++)
+		{ 
+			if (first.edgeLengths[i] != second.edgeLengths[i])
+				return false;
+		}
+
+		return true;
+
+	}
+
+	bool IsItIsomorph()
+	{
+		if (first.GetNumberOfVertex() == second.GetNumberOfVertex())
+		{
+			if (first.GetNumberOfEdge() == second.GetNumberOfEdge())
+			{
+				if (first.GetNumberOfSide() == second.GetNumberOfSide())
+				{
+					if (IsTheEdgesSame())
+					{
+						return true;
+					}
+					return false;
+				}
+				return false;
+			}
+			return false;
+		}
+		return false;
 	}
 };
 
 void main()
 {
 	Isomorph isomorph;
+	isomorph.IsItIsomorph()? cout <<"TRUE" : cout <<"FALSE";
 }
