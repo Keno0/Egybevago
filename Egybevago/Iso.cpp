@@ -32,6 +32,31 @@ public:
 		z = vertexes[2];
 	}
 };
+class Edge
+{
+	int firstVertex, secondVertex;
+
+public:
+	Edge(int firstVertex, int secondVertex)
+	{
+		this->firstVertex = firstVertex;
+		this->secondVertex = secondVertex;
+	}
+
+	Edge()
+	{
+		this->firstVertex = 0;
+		this->secondVertex = 0;
+	}
+
+	void Add(int *indexes)
+	{
+		firstVertex = indexes[0];
+		secondVertex = indexes[1];
+
+	}
+};
+
 
 int ConvertOneNumberStringToInt(string line)
 {
@@ -140,28 +165,40 @@ int * ConvertNumbersStringToInt(string line, int size)
 
 class Object3D
 {
-	Vector3D *list;
+	Vector3D *listofVertex;
+	Edge *listOfEdge;
 	int numberOfVertex = 0;
-	int currentListIndex = 0;
+	int numberOfEdge = 0;
+	int numberOfSide = 0;
+	int currentListOfVertexIndex = 0;
+	int currentListOfEdgeIndex = 0;
 public:
 	void AddVertexToList(int *vertexes)
 	{
-		if (currentListIndex < numberOfVertex)
+		if (currentListOfVertexIndex < numberOfVertex)
 		{
-			list[currentListIndex].Add(vertexes);
-			currentListIndex++;
+			listofVertex[currentListOfVertexIndex].Add(vertexes);
+			currentListOfVertexIndex++;
 		}
 	}
-	void ReadDatasFromFile()
+
+	void AddEdgeToList(int *edges)
 	{
-		ifstream infile;
+		if (currentListOfEdgeIndex < numberOfEdge)
+		{
+			listOfEdge[currentListOfEdgeIndex].Add(edges);
+			currentListOfEdgeIndex++;
+		}
+	}
+	void ReadDatasFromFile(ifstream &infile)
+	{
 		string line = "";
-		infile.open("g:\\Kerti\\Projects\\ItechChallenge\\Egybevago\\Egybevago\\Egybevago\\test1.txt");
+		
 		
 		//csucsok száma
 		getline(infile, line);
 		numberOfVertex = ConvertOneNumberStringToInt(line);
-		list = new Vector3D[numberOfVertex];
+		listofVertex = new Vector3D[numberOfVertex];
 
 		//csucsok beolvasása
 		for (int i = 0; i < numberOfVertex; i++)
@@ -170,12 +207,44 @@ public:
 			AddVertexToList(ConvertNumbersStringToInt(line, 3));
 		}
 
-		//elek beolvasasa
+		//elek szama
+		getline(infile, line);
+		numberOfEdge = ConvertOneNumberStringToInt(line);
+		listOfEdge = new Edge[numberOfEdge];
+
+		//elek beolvasása
+		for (int i = 0; i < numberOfEdge; i++)
+		{
+			getline(infile, line);
+			AddEdgeToList(ConvertNumbersStringToInt(line, 2));
+		}
+		//oldalak szama
+		getline(infile, line);
+		numberOfSide = ConvertOneNumberStringToInt(line);
+		
+		//oldalak kamu beolvasas
+		while (!line.empty())
+			getline(infile, line);
+	}
+};
+
+class Isomorph
+{
+	Object3D first;
+	Object3D second;
+
+public:
+	Isomorph()
+	{
+		ifstream infile;
+		infile.open("g:\\Kerti\\Projects\\ItechChallenge\\Egybevago\\Egybevago\\Egybevago\\test1.txt");
+		first.ReadDatasFromFile(infile);
+		second.ReadDatasFromFile(infile);
+		infile.close();
 	}
 };
 
 void main()
 {
-	Object3D first;
-	first.ReadDatasFromFile();
+	Isomorph isomorph;
 }
