@@ -45,3 +45,18 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+*.suo
+Debug/Egybevago.exe
+*.sln
+Egybevago/Debug/Egybevago.tlog/CL.command.1.tlog
+*.tlog
+Egybevago/Debug/vc140.pdb
+*.filters
+Egybevago/Egybevago.vcxproj
+*.ilk
+Debug/Egybevago.pdb
+*.opendb
+Egybevago/Debug/Egybevago.log
+*.idb
+Egybevago/Debug/Iso.obj
+*.db
